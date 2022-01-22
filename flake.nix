@@ -9,8 +9,14 @@
   outputs = { self, nixpkgs, utils }:
     utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        # Development
-        devShell = pkgs.mkShell { buildInputs = [ pkgs.python3 ]; };
+      in rec {
+        packages.paulus = pkgs.writers.writePython3Bin "paulus" { }
+          (builtins.readFile ./main.py);
+
+        defaultPackage = packages.paulus;
+
+        devShell = pkgs.mkShell {
+          buildInputs = [ pkgs.python39 pkgs.python39Packages.flake8 ];
+        };
       });
 }
