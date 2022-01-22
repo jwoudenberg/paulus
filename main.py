@@ -4,6 +4,7 @@ import urllib.parse
 import argparse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+
 class PaulusHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -21,26 +22,44 @@ class PaulusHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write("Merci!".encode("utf-8"))
 
+
 def run():
     server_address = ('', args.port)
     httpd = HTTPServer(server_address, PaulusHandler)
     httpd.serve_forever()
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Paulus")
-    parser.add_argument('--port', type=int, default=8000, help="Port to start the server on")
-    parser.add_argument('--questions', type=str, default="questions.txt", help="File that contains newline-separated questions")
-    parser.add_argument('--output', type=str, default="paulus.json", help="File to append poll data to")
+    parser.add_argument(
+        '--port', type=int,
+        default=8000,
+        help="Port to start the server on"
+    )
+    parser.add_argument(
+        '--questions',
+        type=str,
+        default="questions.txt",
+        help="File that contains newline-separated questions"
+    )
+    parser.add_argument(
+        '--output',
+        type=str,
+        default="paulus.json",
+        help="File to append poll data to"
+    )
     return parser.parse_args()
 
+
 def parse_form_data(string):
-    form_data = { "time": int(time.time()) }
+    form_data = {"time": int(time.time())}
     for line in string.split("&"):
-        [key,val] = line.split("=")
+        [key, val] = line.split("=")
         parsed_key = urllib.parse.unquote_plus(key).strip()
         parsed_val = urllib.parse.unquote_plus(val).strip()
         form_data[parsed_key] = parsed_val
     return form_data
+
 
 def form_html(questions_file):
     questions = []
@@ -103,6 +122,7 @@ def form_html(questions_file):
       </html>
     """
     return message
+
 
 if __name__ == "__main__":
     args = parse_args()
